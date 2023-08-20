@@ -66,10 +66,17 @@ def smart_sort(path):
     for file_group in file_groups.split("\n\n"):
         file_group = file_group.split("\n")
         folder_name = file_group[0]
+        if "Note:" in file_group:
+            continue 
         if not os.path.exists(path + "/" + folder_name):
             os.makedirs(path + "/" + folder_name)
         for file in file_group[1:]:
             os.rename(path + "/" + file, path + "/" + folder_name + "/" + file)
+
+    # remove empty directories
+    for dirpath, dirnames, filenames in os.walk(path):
+        if len(dirnames) == 0 and len(filenames) == 0:
+            os.rmdir(dirpath)
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True), required=False)
@@ -94,13 +101,18 @@ def rm_dupes(path):
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True), required=False)
-def list_files(path):
+# comma seperated option
+@click.option('--comma', '-c', is_flag=True, help="Comma seperated list of files")
+def list_files(path, comma):
     if path == None:
         path = os.getcwd()
     click.echo("Listing files in " + path + "\n")
 
     for filename in os.listdir(path):
-        print(filename)
+        if comma:
+            print(filename, end=", " if filename != os.listdir(path)[-1] else "")
+        else:
+            print(filename)
 
 @click.command()
 @click.argument('folder_path', type=click.Path(exists=True), required=False)
@@ -274,6 +286,23 @@ def takeout_files(folder_path):
             file_path = os.path.join(dirpath, filename)
             os.rename(file_path, os.path.join(folder_path, filename))
 
+@click.command()
+@click.argument('folder_path', type=click.Path(exists=True), required=False)
+def rm_empty_dirs(folder_path):
+    if folder_path == None:
+        folder_path = os.getcwd()
+    click.echo("Removing empty directories in " + folder_path + "\n")
+
+    count = 0
+
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        if len(dirnames) == 0 and len(filenames) == 0:
+            click.echo("Removing " + dirpath)
+            count += 1
+            os.rmdir(dirpath)
+    
+    click.echo("Removed " + str(count) + " empty directories")
+
 commands.add_command(ext_sort)
 commands.add_command(smart_sort)
 commands.add_command(rm_dupes)
@@ -284,6 +313,7 @@ commands.add_command(view_memory_usage)
 commands.add_command(get_memory_usage)
 commands.add_command(upload_to_drive)
 commands.add_command(takeout_files)
+commands.add_command(rm_empty_dirs)
 
 if __name__ == '__main__':
     commands()
