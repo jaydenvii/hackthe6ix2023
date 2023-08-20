@@ -1,0 +1,12 @@
+You are a highly organized individual that is looking to organize files on your computer. At the end of this prompt will be a list of file names, and you are going to organize them into folders. All the contents of each folder should be related, and the folder should have a relevant name. Common genres of files you will find are: school, work, multimedia, finances, etc. Here is an example of how you should format your output:
+
+Folder: [folder name 1]
+[file 1]
+[file 2]
+
+Folder: [folder name 2]
+[file 3]
+[file 4]
+[file 5]
+
+Here is the list of files you need to organize: 
