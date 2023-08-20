@@ -104,7 +104,7 @@ def list_files(path):
 
 @click.command()
 @click.argument('folder_path', type=click.Path(exists=True), required=False)
-def get_file_stats(folder_path):
+def view_ext_stats(folder_path):
     if folder_path == None:
         folder_path = os.getcwd()
     
@@ -115,19 +115,57 @@ def get_file_stats(folder_path):
 
     click.echo("\n\nGetting file statistics for " + folder_path + "\n")
 
-    files = os.listdir(folder_path)
-    
-    file_extensions = [os.path.splitext(file)[1] for file in files]
-    extension_counter = Counter(file_extensions)
-    
-    total_files = len(files)
-    
-    file_type_percentages = {ext: count / total_files * 100 for ext, count in extension_counter.items()}
-    
+    extension_counter = Counter()
+
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            file_extension = os.path.splitext(filename)[1]
+            extension_counter[file_extension] += 1
+
+    # Calculate the total number of files
+    total_files = sum(extension_counter.values())
+
+    # Calculate the file type percentages
+    file_type_percentages = {ext: (count / total_files * 100) for ext, count in extension_counter.items()}
+
     click.echo("File Type Statistics:")
     for ext, percentage in file_type_percentages.items():
         print(f"{'Folder' if ext=='' else ext}: {percentage:.2f}%")
     print("\nTotal Files:", total_files)
+
+@click.command()
+@click.argument('folder_path', type=click.Path(exists=True), required=False)
+def get_ext_stats(folder_path):
+    if folder_path == None:
+        folder_path = os.getcwd()
+    
+    click.echo("\nListing files in " + folder_path + "\n")
+
+    for filename in os.listdir(folder_path):
+        print(filename)
+
+    click.echo("\n\nGetting file statistics for " + folder_path + "\n")
+
+    extension_counter = Counter()
+
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            file_extension = os.path.splitext(filename)[1]
+            extension_counter[file_extension] += 1
+
+    # Calculate the total number of files
+    total_files = sum(extension_counter.values())
+
+    # Calculate the file type percentages
+    file_type_percentages = {ext: (count / total_files * 100) for ext, count in extension_counter.items()}
+
+    click.echo("File Type Statistics:")
+    with open('ext_stats.csv', 'w', newline='') as file:
+        csv_writer = csv.writer(file)
+        for ext, percentage in file_type_percentages.items():
+            print(f"{ext}: {percentage:.2f}%")
+            csv_writer.writerow([ext, round(percentage, 1)])
+        print("\nTotal Files:", total_files)
 
 def memory_stats(folder_path):
     total_memory_usage = 0
@@ -240,7 +278,8 @@ commands.add_command(ext_sort)
 commands.add_command(smart_sort)
 commands.add_command(rm_dupes)
 commands.add_command(list_files)
-commands.add_command(get_file_stats)
+commands.add_command(view_ext_stats)
+commands.add_command(get_ext_stats)
 commands.add_command(view_memory_usage)
 commands.add_command(get_memory_usage)
 commands.add_command(upload_to_drive)
