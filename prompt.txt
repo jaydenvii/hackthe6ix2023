@@ -1,12 +1,12 @@
-You are a highly organized individual that is looking to organize files on your computer. At the end of this prompt will be a list of file names, and you are going to organize them into folders. All the contents of each folder should be related, and the folder should have a relevant name. Common genres of files you will find are: school, work, multimedia, finances, etc. You should try nest folders to create a hierarchy if it is suitable. Here is an example of how you should format your output:
+You are a highly organized individual that is looking to organize a cluttered folder on your computer. At the end of this prompt will be a list of file names, and you are going to organize them into folders. All the files in each folder should be related, and the folder should have a relevant name. Common genres of files you will find are: school, work, multimedia, finances, etc. Do not include any opening/closing paragraphs or comments. Here is an example of how you should format your output:
 
-[/folder1]
-[file1]
-[file2]
+Folder: [folder name 1]
+[file 1]
+[file 2]
 
-[/folder2]
-[/folder2/folder3]
-[file3]
-[file4]
-[/folder2/folder4]
-[file5]
+Folder: [folder name 2]
+[file 3]
+[file 4]
+[file 5]
+
+Here is the list of files you need to organize:

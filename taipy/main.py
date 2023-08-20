@@ -12,7 +12,6 @@ color_dict = None
 data_dict = None
 options = {
     # Hide the texts
-    "textinfo": "none"
 }
 
 column2 = None
@@ -20,26 +19,52 @@ color_dict1 = None
 data_dict1 = None
 options1 = {
     # Hide the texts
-    "textinfo": "none"
 }
 
 page_1 = """
-<center> <h1> Hello there! </h1> </center>
-<center> <|{memory_path}|file_selector|label=Upload Memory CSV|on_action=memory_action|extensions=.csv|> </center>
+<center> <h1> Welcome to FyLy, your AI-powered file organizer. </h1> </center>
 
-<center> <|{ext_path}|file_selector|label=Upload Extensions CSV|on_action=ext_action|extensions=.csv|> </center>
+<br/>
+
+<center> <h2> File Analytics Centre </h2> </center>
+
+<|layout|columns=1 1|
+    <|
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<center> Upload a CSV file containing the memory usage of each file in your directory. </center>
+
+<center> <|{memory_path}|file_selector|label=Upload Memory CSV|on_action=memory_action|extensions=.csv|id=memory_upload|> </center>
+    |>
+
+    <|
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<center> Upload a CSV file containing the extension make-up of each file in your directory. </center>
+
+<center> <|{ext_path}|file_selector|label=Upload Extensions CSV|on_action=ext_action|extensions=.csv|id=ext_upload|> </center>
+    |>
+|>
 """
 
 page_2 = """
 <center> <h1> Memory Statistics </h1> </center>
 
-<|{data_dict}|chart|type=pie|values=Area|label=Extensions|layout={color_dict}|options={options}|>
+<center> <|{data_dict}|chart|type=pie|values=Area|labels=Extensions|layout={color_dict}|options={options}|> </center>
 """
 
 page_3 = """
 <center> <h1> Extension Statistics </h1> </center>
 
-<|{data_dict1}|chart|type=pie|values=Area|label=Extensions|layout={color_dict1}|options={options}|>
+<center> <|{data_dict1}|chart|type=pie|values=Area|labels=Extensions|layout={color_dict1}|options={options}|> </center>
 """
 
 def memory_action(state):
@@ -66,8 +91,10 @@ def memory_action(state):
         for _ in range(len(unique_extensions))
     ]
 
+    color_codes = [f"hsl({360*(i-1)/(len(unique_extensions)-1)},90%,60%)" for i in range(1, len(unique_extensions)+1)]
+
     # Create a dictionary in the desired format
-    state.color_dict = {"piecolorway": color_codes, "title": "Memory Usage By File", "showlegend": False}
+    state.color_dict = {"piecolorway": color_codes, "title": "Memory Usage By File", "showlegend": True}
     # Create a dictionary in the desired format
     state.data_dict = {"Extensions": extensions_first_index, "Area": areas}
 
@@ -89,7 +116,9 @@ def ext_action(state):
         for _ in range(len(unique_extensions))
     ]
 
-    state.color_dict1 = {"piecolorway": color_codes, "title": "Extension Make-Up By Percentage", "showlegend": False}
+    color_codes = [f"hsl({360*(i-1)/(len(unique_extensions)-1)},90%,60%)" for i in range(1, len(unique_extensions)+1)]
+
+    state.color_dict1 = {"piecolorway": color_codes, "title": "Extension Make-Up By Percentage", "showlegend": True}
 
     state.data_dict1 = {"Extensions": extensions_first_index1, "Area": column2}
 
