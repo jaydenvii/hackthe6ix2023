@@ -46,10 +46,22 @@ def smart_sort(path):
     # read in prompt
     prompt = open("prompt.txt", "r").read()
 
-    prompt = prompt + "\"" + ", ".join(filenames) + "\""
+    prompt = """Organize the following list of files into appropriate folders: """ + ", ".join(filenames) + """
 
-    print(prompt + "\n\n")
+The folders should be: school, finances, images, audio, videos.
 
+Format your output like this:
+
+[/foldername1]
+[filename1]
+[filename2]
+
+[/foldername2]
+[filename3]
+[filename4]
+
+Be sure every file and folder is present, and each folder is separated by two newline characters.
+"""
     file_groups = gpt.get_response(prompt)
 
     file_groups = file_groups.replace("Folder: ", "")
@@ -60,18 +72,17 @@ def smart_sort(path):
     
     file_groups = file_groups.replace("- ", "")
 
-    print(file_groups)
-
     ## put files in folders
     for file_group in file_groups.split("\n\n"):
         file_group = file_group.split("\n")
         folder_name = file_group[0]
-        if "Note:" in file_group:
-            continue 
         if not os.path.exists(path + "/" + folder_name):
             os.makedirs(path + "/" + folder_name)
         for file in file_group[1:]:
-            os.rename(path + "/" + file, path + "/" + folder_name + "/" + file)
+            try:
+                os.rename(path + "/" + file, path + "/" + folder_name + "/" + file)
+            except (FileNotFoundError):
+                continue
 
     # remove empty directories
     for dirpath, dirnames, filenames in os.walk(path):

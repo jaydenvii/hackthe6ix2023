@@ -21,16 +21,21 @@ options1 = {
     # Hide the texts
 }
 
-page_1 = """
-<center> <h1> Welcome to FyLy, your AI-powered file organizer. </h1> </center>
+logo_path = "logo.png"
 
-<br/>
+page_1 = """
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+</style>
+
+<center> <h1> Welcome to FYLY, your AI-powered file organizer. </h1> </center>
+
+<center> <|{logo_path}|image|> </center>
 
 <center> <h2> File Analytics Centre </h2> </center>
 
 <|layout|columns=1 1|
     <|
-<br/>
 <br/>
 <br/>
 <br/>
@@ -47,7 +52,6 @@ page_1 = """
 <br/>
 <br/>
 <br/>
-<br/>
 <center> Upload a CSV file containing the extension make-up of each file in your directory. </center>
 
 <center> <|{ext_path}|file_selector|label=Upload Extensions CSV|on_action=ext_action|extensions=.csv|id=ext_upload|> </center>
@@ -56,12 +60,20 @@ page_1 = """
 """
 
 page_2 = """
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+</style>
+
 <center> <h1> Memory Statistics </h1> </center>
 
 <center> <|{data_dict}|chart|type=pie|values=Area|labels=Extensions|layout={color_dict}|options={options}|> </center>
 """
 
 page_3 = """
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+</style>
+
 <center> <h1> Extension Statistics </h1> </center>
 
 <center> <|{data_dict1}|chart|type=pie|values=Area|labels=Extensions|layout={color_dict1}|options={options}|> </center>
@@ -124,7 +136,16 @@ def ext_action(state):
 
     navigate(state, "ext_stats")
 
+stylekit = {
+    "font_family": "Poppins, sans-serif",
+    "color_background_dark": "#1E1E1E",
+    "color_primary": "#EA4D2B",
+    "color_secondary": "#EA4D2B",
+    "border_radius": "8px",
+    "color_paper_dark": "#2D2D2D",
+}
+
 if __name__ == "__main__":
     pages = {"home": page_1, "memory_stats": page_2, "ext_stats": page_3}
     gui = Gui(pages=pages)
-    gui.run(use_reloader=True, port=8080)
+    gui.run(use_reloader=True, stylekit=stylekit)
